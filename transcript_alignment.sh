@@ -59,7 +59,7 @@ reference_gtf_url_basename=$(basename "$reference_gtf_url")
 cd ..
 
 # Build the Hisat2 index
-hisat2-build -p 16 "${ref_dir}${reference_genome_url_basename%.gz}" "${hisat2_index_dir}hisat_index"
+# hisat2-build -p 16 "${ref_dir}${reference_genome_url_basename%.gz}" "${hisat2_index_dir}hisat_index"
 
 # Run Hisat2 alignment
 for file in "$trimmed_fastq_dir"*_1_trimmed.fastq; do
@@ -67,15 +67,15 @@ for file in "$trimmed_fastq_dir"*_1_trimmed.fastq; do
   fastq2="${base}_2_trimmed.fastq"
   sample_name=$(basename "$base")
   mkdir -p "${hisat2_output_dir}$sample_name"
-  hisat2 --rna-strandness RF --novel-splicesite-outfile "${hisat2_output_dir}$sample_name/splicesite.txt" \
-    -S "${hisat2_output_dir}$sample_name/accepted_hits.sam" -p 10 -x "${hisat2_index_dir}hisat_index" -1 "$file" -2 "$fastq2"
+  # hisat2 --rna-strandness RF --novel-splicesite-outfile "${hisat2_output_dir}$sample_name/splicesite.txt" \
+  #   -S "${hisat2_output_dir}$sample_name/accepted_hits.sam" -p 10 -x "${hisat2_index_dir}hisat_index" -1 "$file" -2 "$fastq2"
 
   # Convert SAM to BAM
-  samtools view -@ 5 -bS -h "${hisat2_output_dir}$sample_name/accepted_hits.sam" > "${hisat2_output_dir}$sample_name/accepted_hits.bam"
+  # samtools view -@ 5 -bS -h "${hisat2_output_dir}$sample_name/accepted_hits.sam" > "${hisat2_output_dir}$sample_name/accepted_hits.bam"
 
   # Sort and index the BAM file
-  samtools sort -@ 5 "${hisat2_output_dir}$sample_name/accepted_hits.bam" -o "${hisat2_output_dir}$sample_name/accepted_hits.sorted.bam"
-  samtools index "${hisat2_output_dir}$sample_name/accepted_hits.sorted.bam"
+  # samtools sort -@ 5 "${hisat2_output_dir}$sample_name/accepted_hits.bam" -o "${hisat2_output_dir}$sample_name/accepted_hits.sorted.bam"
+  samtools index -c "${hisat2_output_dir}$sample_name/accepted_hits.sorted.bam"
 done
 
 # Run StringTie assembly

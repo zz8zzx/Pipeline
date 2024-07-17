@@ -2,10 +2,10 @@
 #SBATCH --job-name=main_data_processing
 #SBATCH --output=%x_%j.log
 #SBATCH --error=%x_%j.err
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
+#SBATCH --ntasks=2
+#SBATCH --cpus-per-task=32
 #SBATCH --mem=200G
-#SBATCH --time=36:00:00
+#SBATCH --time=12:00:00
 #SBATCH --partition=work
 
 ############################################################
@@ -14,9 +14,9 @@
 project="/scratch/peb004/whuang/$1"
 
 # Set reference genome URL
-reference_genome_url="$2"
-reference_transcriptome_url="$3"
-reference_gtf_url="$4"
+reference_genome="$2"
+reference_transcriptome="$3"
+reference_gtf="$4"
 
 # Pipeline directory
 pipeline_dir="/home/whuang/pipeline/"
@@ -44,14 +44,18 @@ log_status() {
 # bash ${pipeline_dir}data_acquisition.sh "$project" &> $log_dir/data_acquisition.log
 # log_status "Data Acquisition"
 
-# echo "Data QC started at `date`" >> $log_dir/main.log
-# bash ${pipeline_dir}data_qc.sh "$project" &> $log_dir/data_qc.log
-# log_status "Data QC"
+echo "Data QC started at `date`" >> $log_dir/main.log
+bash ${pipeline_dir}data_qc.sh "$project" &> $log_dir/data_qc.log
+log_status "Data QC"
 
 # echo "Transcript Quantification started at `date`" >> $log_dir/main.log
-# bash ${pipeline_dir}transcript_quantification.sh "$project" "$reference_transcriptome_url" &> $log_dir/transcript_quantification.log
+# bash ${pipeline_dir}transcript_quantification.sh "$project" "$reference_transcriptome" &> $log_dir/transcript_quantification.log
 # log_status "Transcript Quantification"
 
-echo "Transcript Alignment started at `date`" >> $log_dir/main.log
-bash ${pipeline_dir}transcript_alignment.sh "$project" "$reference_genome_url" "$reference_gtf_url" &> $log_dir/transcript_alignment.log
-log_status "Transcript Alignment"
+# echo "Transcript Alignment started at `date`" >> $log_dir/main.log
+# bash ${pipeline_dir}transcript_alignment.sh "$project" "$reference_genome" "$reference_gtf" &> $log_dir/transcript_alignment.log
+# log_status "Transcript Alignment"
+
+echo "Transcript Alignment (STAR) started at `date`" >> $log_dir/main.log
+bash ${pipeline_dir}transcript_alignment_STAR.sh "$project" "$reference_genome" "$reference_gtf" &> $log_dir/transcript_alignment_STAR.log
+log_status "Transcript Alignment (STAR)"

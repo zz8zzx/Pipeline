@@ -3,7 +3,7 @@
 #SBATCH --output=%x_%j.log
 #SBATCH --error=%x_%j.err
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=32
 #SBATCH --mem=200G
 #SBATCH --time=16:00:00
 #SBATCH --partition=work
@@ -46,7 +46,7 @@ cd "$project"
 for file in "$fastq_dir"*_1.fastq; do
   base="${file%_1.fastq}"
   fastq2="${base}_2.fastq"
-  fastqc -t 8 -o "$output_dir" "$file" "$fastq2"
+  fastqc -t 32 -o "$output_dir" "$file" "$fastq2"
 done
 
 # Run MultiQC
@@ -59,7 +59,7 @@ for file in "$fastq_dir"*_1.fastq; do
   filename="$(basename "$base")"
   output1="${output_trimmed_dir}${filename}_1_trimmed.fastq"
   output2="${output_trimmed_dir}${filename}_2_trimmed.fastq"
-  fastp -i "$file" -I "$fastq2" -o "$output1" -O "$output2" --detect_adapter_for_pe --thread 4
+  fastp -i "$file" -I "$fastq2" -o "$output1" -O "$output2" --detect_adapter_for_pe --thread 16
 done
 
 ################################################
